@@ -50,10 +50,12 @@ public class DependencyPrescription extends DependencyDirective {
 	 * @return <code>true</code> if the packages match this constraint
 	 */
 	@Override
-	public boolean followsDirective(Collection<JavaPackage> packages) {
-		if (packages.size() == packages.size()) {
+	public boolean followsDirective(Collection<JavaPackage> analysedPackages) {
+		// TODO the following test is bogus; the intention was probably to
+		// compare the nr of analysed with the number of prescribed packages. 
+		if (analysedPackages.size() == analysedPackages.size()) {
 
-			for (Iterator<JavaPackage> i = packages.iterator(); i.hasNext();) {
+			for (Iterator<JavaPackage> i = analysedPackages.iterator(); i.hasNext();) {
 				Object next = i.next();
 				JavaPackage nextPackage = (JavaPackage) next;
 				if (!matchPackage(nextPackage)) {
@@ -67,13 +69,13 @@ public class DependencyPrescription extends DependencyDirective {
 		return false;
 	}
 
-	private boolean matchPackage(JavaPackage expectedPackage) {
+	private boolean matchPackage(JavaPackage analysedPackage) {
 
-		JavaPackage actualPackage = (JavaPackage) packages.get(expectedPackage
+		JavaPackage prescribedPackage = (JavaPackage) packages.get(analysedPackage
 				.getName());
 
-		if (actualPackage != null) {
-			if (equalsDependencies(actualPackage, expectedPackage)) {
+		if (prescribedPackage != null) {
+			if (equalsDependencies(prescribedPackage, analysedPackage)) {
 				return true;
 			}
 		}
