@@ -1,5 +1,6 @@
 package jdepend.framework;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,16 @@ import java.util.Map;
 public abstract class DependencyDirective {
 
     protected Map<String, JavaPackage> packages = new HashMap<String, JavaPackage>();
+    protected final Collection<String> packageFilter;
 
+    protected DependencyDirective() {
+    	this.packageFilter = new ArrayList<String>();
+    }
+    
+    protected DependencyDirective(Collection<String> packageFilter) {
+    	this.packageFilter = new ArrayList<String>(packageFilter);
+    }
+    
     /**
 	 * Adds the specified package to this directive. The returned JavaPackage
 	 * can be used to couple to other packages.
