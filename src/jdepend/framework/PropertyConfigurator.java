@@ -55,18 +55,18 @@ public class PropertyConfigurator {
         this(loadProperties(f));
     }
 
-    public Collection getFilteredPackages() {
+    public Collection<String> getFilteredPackages() {
 
-        Collection packages = new ArrayList();
+        Collection<String> packages = new ArrayList<String>();
 
-        Enumeration e = properties.propertyNames();
+        Enumeration<?> e = properties.propertyNames();
         while (e.hasMoreElements()) {
             String key = (String) e.nextElement();
             if (key.startsWith("ignore")) {
                 String path = properties.getProperty(key);
                 StringTokenizer st = new StringTokenizer(path, ",");
                 while (st.hasMoreTokens()) {
-                    String name = (String) st.nextToken();
+                    String name = st.nextToken();
                     name = name.trim();
                     packages.add(name);
                 }
@@ -76,11 +76,11 @@ public class PropertyConfigurator {
         return packages;
     }
 
-    public Collection getConfiguredPackages() {
+    public Collection<JavaPackage> getConfiguredPackages() {
 
-        Collection packages = new ArrayList();
+        Collection<JavaPackage> packages = new ArrayList<JavaPackage>();
 
-        Enumeration e = properties.propertyNames();
+        Enumeration<?> e = properties.propertyNames();
         while (e.hasMoreElements()) {
             String key = (String)e.nextElement();
             if (!key.startsWith("ignore")

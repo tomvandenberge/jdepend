@@ -17,7 +17,7 @@ import java.util.*;
 
 public class PackageFilter {
 
-    private Collection filtered;
+    private Collection<String> filtered;
 
     /**
      * Constructs a <code>PackageFilter</code> instance containing 
@@ -25,7 +25,7 @@ public class PackageFilter {
      * if it exists.
      */
     public PackageFilter() {
-        this(new ArrayList());
+        this(new ArrayList<String>());
         PropertyConfigurator config = new PropertyConfigurator();
         addPackages(config.getFilteredPackages());
     }
@@ -37,7 +37,7 @@ public class PackageFilter {
      * @param f Property file.
      */
     public PackageFilter(File f) {
-        this(new ArrayList());
+        this(new ArrayList<String>());
         PropertyConfigurator config = new PropertyConfigurator(f);
         addPackages(config.getFilteredPackages());
     }
@@ -48,8 +48,8 @@ public class PackageFilter {
      * 
      * @param packageNames Package names to filter.
      */
-    public PackageFilter(Collection packageNames) {
-        filtered = new ArrayList();
+    public PackageFilter(Collection<String> packageNames) {
+        filtered = new ArrayList<String>();
         addPackages(packageNames);
     }
 
@@ -58,7 +58,7 @@ public class PackageFilter {
      * 
      * @return Filtered package names.
      */
-    public Collection getFilters() {
+    public Collection<String> getFilters() {
         return filtered;
     }
 
@@ -70,8 +70,8 @@ public class PackageFilter {
      *         <code>false</code> otherwise.
      */
     public boolean accept(String packageName) {
-        for (Iterator i = getFilters().iterator(); i.hasNext();) {
-            String nameToFilter = (String)i.next();
+        for (Iterator<String> i = getFilters().iterator(); i.hasNext();) {
+            String nameToFilter = i.next();
             if (packageName.startsWith(nameToFilter)) {
                 return false;
             }
@@ -80,9 +80,9 @@ public class PackageFilter {
         return true;
     }
 
-    public void addPackages(Collection packageNames) {
-        for (Iterator i = packageNames.iterator(); i.hasNext();) {
-            addPackage((String)i.next());
+    public void addPackages(Collection<String> packageNames) {
+        for (Iterator<String> i = packageNames.iterator(); i.hasNext();) {
+            addPackage(i.next());
         }
     }
 
