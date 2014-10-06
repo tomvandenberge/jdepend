@@ -13,7 +13,8 @@ import java.util.HashSet;
 public class DependencyProscription extends DependencyDirective {
 
 	@Override
-	public boolean followsDirective(Collection<JavaPackage> packages) {
+	public boolean followsDirective(Collection<JavaPackage> analysedPackages) {
+		Collection<JavaPackage> packages = applyPackageFilter(analysedPackages);
 		for (JavaPackage pckg : packages) {
 			if (hasDisallowedCouplings(pckg)) {
 				return false;

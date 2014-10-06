@@ -3,7 +3,10 @@ package jdepend.framework;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A <code>DependencyDirective</code> represents a set of dependency
@@ -16,16 +19,17 @@ import java.util.Map;
 public abstract class DependencyDirective {
 
     protected Map<String, JavaPackage> packages = new HashMap<String, JavaPackage>();
-    protected final Collection<String> packageFilter;
+    protected final Set<JavaPackage> packageFilter;
 
     protected DependencyDirective() {
-    	this.packageFilter = new ArrayList<String>();
+    	// No filtering.
+    	this.packageFilter = null;
     }
     
-    protected DependencyDirective(Collection<String> packageFilter) {
-    	this.packageFilter = new ArrayList<String>(packageFilter);
+    protected DependencyDirective(Set<JavaPackage> packageFilter) {
+    	this.packageFilter = new HashSet<JavaPackage>(packageFilter);
     }
-    
+
     /**
 	 * Adds the specified package to this directive. The returned JavaPackage
 	 * can be used to couple to other packages.
@@ -70,4 +74,30 @@ public abstract class DependencyDirective {
      * @return true if the packages follow this directive, otherwise false.
      */
     public abstract boolean followsDirective(Collection<JavaPackage> packages);
+    
+    /**
+	 * Returns the packages from {@code packages} that match the configured
+	 * package filter. If no package filter is configured, the specified
+	 * collection is returned.
+	 * 
+	 * @param packages the packages to filter.
+	 * @return the packages that match the package filter, or {@code packages}
+	 *         if no package filter is configured.
+	 */
+    protected Collection<JavaPackage> applyPackageFilter(Collection<JavaPackage> packages) {
+    	return packageFilter == null ? packages : filter(packages, packageFilter);
+    }
+    
+    /**
+     * Returns all {@code packages} specified in {@code filter}. Only the name is used to compare the packages.
+     *  
+     * @param packages the packages to be filtered.
+     * @param filter the packages to pass.
+     * @return all packages with names specified in {@code filters}.
+     */
+    protected static Collection<JavaPackage> filter(Collection<JavaPackage> packages, Collection<JavaPackage> filter) {
+    	List<JavaPackage> residue = new ArrayList<JavaPackage>(packages);
+    	residue.retainAll(filter);
+    	return residue;
+    }
 }

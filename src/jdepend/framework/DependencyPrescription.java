@@ -2,6 +2,7 @@ package jdepend.framework;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * The <code>DependencyPrescription</code> class is a constraint that tests
@@ -44,29 +45,45 @@ import java.util.Iterator;
 public class DependencyPrescription extends DependencyDirective {
 
 	/**
+	 * Creates a new prescription without a package filter. All dependencies for
+	 * all analysed packages must be prescribed.
+	 */
+	public DependencyPrescription() {
+		super();
+	}
+	
+	/**
+	 * Creates a new prescription with a package filter. Only the dependencies
+	 * (both afferent and efferent) for the classes in the filter must be
+	 * prescribed.
+	 * 
+	 * @param packageFilter the packages for which the dependencies are
+	 *            prescribed.
+	 */
+	public DependencyPrescription(Set<JavaPackage> packageFilter) {
+		super(packageFilter);
+	}
+	
+	/**
 	 * Indicates whether the specified packages match the packages in this
 	 * prescription.
 	 * 
-	 * @return <code>true</code> if the packages match this constraint
+	 * @return <code>true</code> if the packages match this prescription.
 	 */
 	@Override
 	public boolean followsDirective(Collection<JavaPackage> analysedPackages) {
-		// TODO the following test is bogus; the intention was probably to
-		// compare the nr of analysed with the number of prescribed packages. 
-		if (analysedPackages.size() == analysedPackages.size()) {
-
-			for (Iterator<JavaPackage> i = analysedPackages.iterator(); i.hasNext();) {
-				Object next = i.next();
-				JavaPackage nextPackage = (JavaPackage) next;
-				if (!matchPackage(nextPackage)) {
-					return false;
-				}
-
-				return true;
+		if (packageFilter == null && analysedPackages.size() != packages.size()) {
+			return false;
+		}
+		
+		Collection<JavaPackage> packages = applyPackageFilter(analysedPackages);
+		for (JavaPackage pkg : packages) {
+			if (!matchPackage(pkg)) {
+				return false;
 			}
 		}
+		return true;
 
-		return false;
 	}
 
 	private boolean matchPackage(JavaPackage analysedPackage) {
