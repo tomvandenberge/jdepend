@@ -2,7 +2,7 @@ package jdepend.framework;
 
 public class DependencyProscriptionTest extends JDependTestCase {
 
-	private JDepend jdepend;
+	private JDepend jdepend = new JDepend();
 
 	public DependencyProscriptionTest(String name) {
 		super(name);

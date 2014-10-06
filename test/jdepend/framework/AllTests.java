@@ -13,7 +13,6 @@ public class AllTests {
     public static Test suite() {
 
         TestSuite suite = new TestSuite("JDepend Tests");
-
         suite.addTestSuite(ClassFileParserTest.class);
         suite.addTestSuite(ComponentTest.class);
         suite.addTestSuite(JarFileParserTest.class);

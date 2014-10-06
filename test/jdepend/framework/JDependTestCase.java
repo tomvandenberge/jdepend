@@ -9,7 +9,7 @@ import junit.framework.*;
  * @author Clarkware Consulting, Inc.
  */
 
-public class JDependTestCase extends TestCase {
+public abstract class JDependTestCase extends TestCase {
 
     private String homeDir;
     private String testDir;
@@ -24,7 +24,6 @@ public class JDependTestCase extends TestCase {
     }
 
     protected void setUp() {
-
         homeDir = System.getProperty("jdepend.home");
         if (homeDir == null) {
             fail("Property 'jdepend.home' not defined");
