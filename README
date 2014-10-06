@@ -1,3 +1,12 @@
+This is a fork of clarkware/jdepend. 
+
+It few features have been added, and things have been improved:
+
+ * DependencyConstraint has been split up to DependencyPrescription and DependencyProscription
+ * The pre/proscriptions can be used to verify a subset of the analysed classes, instead of all, using a package filter
+ * The project can also be built with maven
+ * A start has been made to introduce generics in the code
+ * Test cases have been fixed
 
                             J D E P E N D     
  
