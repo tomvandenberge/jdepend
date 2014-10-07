@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
@@ -111,7 +112,7 @@ public class JDepend {
     private PackageFilter filter;
     private ClassFileParser parser;
     private JavaClassBuilder builder;
-    private Collection components;
+    private Collection<String> components;
 
     public JDepend() {
         this(new PackageFilter());
@@ -166,12 +167,21 @@ public class JDepend {
      * @param components Comma-separated list of components.
      */
     public void setComponents(String components) {
-        this.components = new ArrayList();
+        this.components = new ArrayList<String>();
         StringTokenizer st = new StringTokenizer(components, ",");
         while (st.hasMoreTokens()) {
             String component = st.nextToken();
             this.components.add(component);
         }
+    }
+    
+    /**
+     * Sets the list of components.
+     * 
+     * @param components The components to set.
+     */
+    public void setComponents(Set<String> components) {
+    	this.components = new ArrayList<String>(components);
     }
 
     /**
@@ -289,8 +299,7 @@ public class JDepend {
 
     private String toComponent(String packageName) {
         if (components != null) {
-            for (Iterator i = components.iterator(); i.hasNext();) {
-                String component = (String)i.next();
+            for (String component : components) {
                 if (packageName.startsWith(component + ".")) {
                     return component;
                 }

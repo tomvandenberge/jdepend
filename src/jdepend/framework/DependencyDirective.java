@@ -28,11 +28,18 @@ public abstract class DependencyDirective {
     	BOTH
     }
     
+    /**
+     * The created directive applies to all analysed classes.
+     */
     protected DependencyDirective() {
     	// No filtering.
     	this.packageFilter = null;
     }
     
+	/**
+	 * The created directive only applies to analysed classes specified by the
+	 * package filter.
+	 */
     protected DependencyDirective(Set<JavaPackage> packageFilter) {
     	this.packageFilter = new HashSet<JavaPackage>(packageFilter);
     }
