@@ -77,6 +77,10 @@ public class DependencyPrescription extends DependencyDirective {
 		}
 		
 		Collection<JavaPackage> packages = applyPackageFilter(analysedPackages);
+		if (packages.isEmpty()) {
+			return false;
+		}
+		
 		for (JavaPackage pkg : packages) {
 			if (!matchPackage(pkg)) {
 				return false;
@@ -101,6 +105,11 @@ public class DependencyPrescription extends DependencyDirective {
 	}
 
 	private boolean equalsDependencies(JavaPackage a, JavaPackage b) {
+		if (this.matchMode == MatchMode.AFFERENT_ONLY) {
+			return equalsAfferents(a, b);
+		} else if (this.matchMode == MatchMode.EFFERENT_ONLY) {
+			return equalsEfferents(a, b);
+		}
 		return equalsAfferents(a, b) && equalsEfferents(a, b);
 	}
 

@@ -20,7 +20,14 @@ public abstract class DependencyDirective {
 
     protected Map<String, JavaPackage> packages = new HashMap<String, JavaPackage>();
     protected final Set<JavaPackage> packageFilter;
+    protected MatchMode matchMode = MatchMode.BOTH; 
 
+    protected enum MatchMode {
+    	AFFERENT_ONLY,
+    	EFFERENT_ONLY,
+    	BOTH
+    }
+    
     protected DependencyDirective() {
     	// No filtering.
     	this.packageFilter = null;
@@ -30,6 +37,30 @@ public abstract class DependencyDirective {
     	this.packageFilter = new HashSet<JavaPackage>(packageFilter);
     }
 
+    /**
+	 * This directive will verify afferent couplings only. Efferent couplings
+	 * will be ignored.
+	 */
+    public void matchAfferentOnly() {
+    	this.matchMode = MatchMode.AFFERENT_ONLY;
+    }
+    
+    /**
+	 * This directive will verify efferent couplings only. Afferent couplings
+	 * will be ignored.
+	 */
+    public void matchEfferentOnly() {
+    	this.matchMode = MatchMode.EFFERENT_ONLY;
+    }
+    
+    /**
+	 * This directive will verify all couplings (afferent and efferent). This is
+	 * the default setting.
+	 */
+    public void matchAll() {
+    	this.matchMode = MatchMode.BOTH;
+    }
+    
     /**
 	 * Adds the specified package to this directive. The returned JavaPackage
 	 * can be used to couple to other packages.
