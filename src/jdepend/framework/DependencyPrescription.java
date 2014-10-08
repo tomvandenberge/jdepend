@@ -1,7 +1,7 @@
 package jdepend.framework;
 
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -114,44 +114,66 @@ public class DependencyPrescription extends DependencyDirective {
 	}
 
 	private boolean equalsAfferents(JavaPackage a, JavaPackage b) {
-
-		if (a.equals(b)) {
-
-			Collection<JavaPackage> otherAfferents = b.getAfferents();
-
-			if (a.getAfferents().size() == otherAfferents.size()) {
-				for (Iterator<JavaPackage> i = a.getAfferents().iterator(); i.hasNext();) {
-					JavaPackage afferent = (JavaPackage) i.next();
-					if (!otherAfferents.contains(afferent)) {
-						return false;
-					}
-				}
-
-				return true;
-			}
+		if (!a.equals(b)) {
+			return false;
 		}
-
-		return false;
+		return equalsDependencies(a.getAfferents(), b.getAfferents());
 	}
 
-	private boolean equalsEfferents(JavaPackage a, JavaPackage b) {
+	static boolean equalsEfferents(JavaPackage a, JavaPackage b) {
+		if (!a.equals(b)) {
+			return false;
+		}
+		return equalsDependencies(a.getEfferents(), b.getEfferents());
+	}
 
-		if (a.equals(b)) {
+	private static boolean equalsDependencies(Collection<JavaPackage> packagesA, Collection<JavaPackage> packagesB) {
+		Set<String> components = new HashSet<String>();
+		components.addAll(getComponents(packagesA));
+		components.addAll(getComponents(packagesB));
+		
+		Collection<String> aDependencies = compressToComponents(packagesA, components);
+		Collection<String> bDependencies = compressToComponents(packagesB, components);
 
-			Collection<JavaPackage> otherEfferents = b.getEfferents();
-
-			if (a.getEfferents().size() == otherEfferents.size()) {
-				for (Iterator<JavaPackage> i = a.getEfferents().iterator(); i.hasNext();) {
-					JavaPackage efferent = (JavaPackage) i.next();
-					if (!otherEfferents.contains(efferent)) {
-						return false;
-					}
-				}
-
-				return true;
+		return aDependencies.equals(bDependencies);
+	}
+	
+	static Set<String> getComponents(Collection<JavaPackage> packages) {
+		Set<String> components = new HashSet<String>();
+		for (JavaPackage pkg : packages) {
+			if (pkg.isComponent()) {
+				components.add(pkg.getName());
 			}
 		}
-
-		return false;
+		return components;
+	}
+	
+	/*
+	 * Returns the names of all packages, or, if the package is part of one of
+	 * the provided components, the name of the component.
+	 * 
+	 * A package is considered part of a component if the component name matches
+	 * the package name or any of the package super-package names.
+	 */
+	static Set<String> compressToComponents(Collection<JavaPackage> packages, Set<String> components) {
+		Set<String> compressed = new HashSet<String>();
+		for (JavaPackage pkg : packages) {
+			// Is the package itself a component?
+			if (pkg.isComponent()) {
+				compressed.add(pkg.getName());
+				continue;
+			}
+			
+			// Is the package part of one of the components?
+			String name = pkg.getName();
+			for (String component : components) {
+				if (pkg.getName().equals(component) || pkg.getName().startsWith(component + ".")) {
+					name = component;
+					break;
+				}
+			}
+			compressed.add(name);
+		}
+		return compressed;
 	}
 }

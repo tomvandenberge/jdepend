@@ -13,23 +13,31 @@ public class JavaPackage {
 
     private String name;
     private int volatility;
-    private HashSet classes;
-    private List afferents;
-    private List efferents;
-
+    private Set<JavaClass> classes;
+    private List<JavaPackage> afferents;
+    private List<JavaPackage> efferents;
+    private boolean isComponent;
 
     public JavaPackage(String name) {
         this(name, 1);
     }
 
     public JavaPackage(String name, int volatility) {
-        this.name = name;
+        this.name = parseName(name);
         setVolatility(volatility);
-        classes = new HashSet();
-        afferents = new ArrayList();
-        efferents = new ArrayList();
+        classes = new HashSet<JavaClass>();
+        afferents = new ArrayList<JavaPackage>();
+        efferents = new ArrayList<JavaPackage>();
     }
 
+    private String parseName(String name) {
+    	if (!name.endsWith(".*")) {
+    		return name;
+    	}
+    	isComponent = true;
+    	return name.substring(0, name.length() - 2);
+    }
+    
     public String getName() {
         return name;
     }
@@ -48,8 +56,16 @@ public class JavaPackage {
         volatility = v;
     }
 
+    /**
+	 * @return <code>true</code> if this package is created as a component,
+	 *         <code>false</code> if it's not.
+	 */
+    public boolean isComponent() {
+    	return isComponent;
+    }
+    
     public boolean containsCycle() {
-        return collectCycle(new ArrayList());
+        return collectCycle(new ArrayList<JavaPackage>());
     }
 
     /**
@@ -61,7 +77,7 @@ public class JavaPackage {
      * @return <code>true</code> if a cycle exist; <code>false</code>
      *         otherwise.
      */
-    public boolean collectCycle(List list) {
+    public boolean collectCycle(List<JavaPackage> list) {
 
         if (list.contains(this)) {
             list.add(this);
@@ -70,8 +86,7 @@ public class JavaPackage {
 
         list.add(this);
 
-        for (Iterator i = getEfferents().iterator(); i.hasNext();) {
-            JavaPackage efferent = (JavaPackage)i.next();
+        for (JavaPackage efferent : getEfferents()) {
             if (efferent.collectCycle(list)) {
                 return true;
             }
@@ -94,7 +109,7 @@ public class JavaPackage {
      * @return <code>true</code> if a cycle exist; <code>false</code>
      *         otherwise.
      */
-    public boolean collectAllCycles(List list) {
+    public boolean collectAllCycles(List<JavaPackage> list) {
 
         if (list.contains(this)) {
             list.add(this);
@@ -104,8 +119,7 @@ public class JavaPackage {
         list.add(this);
 
         boolean containsCycle = false;
-        for (Iterator i = getEfferents().iterator(); i.hasNext();) {
-            JavaPackage efferent = (JavaPackage)i.next();
+        for (JavaPackage efferent : getEfferents()) {
             if (efferent.collectAllCycles(list)) {
                 containsCycle = true;
             }
@@ -123,7 +137,7 @@ public class JavaPackage {
         classes.add(clazz);
     }
 
-    public Collection getClasses() {
+    public Collection<JavaClass> getClasses() {
         return classes;
     }
 
@@ -134,8 +148,7 @@ public class JavaPackage {
     public int getAbstractClassCount() {
         int count = 0;
 
-        for (Iterator i = classes.iterator(); i.hasNext();) {
-            JavaClass clazz = (JavaClass)i.next();
+        for (JavaClass clazz : classes) {
             if (clazz.isAbstract()) {
                 count++;
             }
@@ -147,8 +160,7 @@ public class JavaPackage {
     public int getConcreteClassCount() {
         int count = 0;
 
-        for (Iterator i = classes.iterator(); i.hasNext();) {
-            JavaClass clazz = (JavaClass)i.next();
+        for (JavaClass clazz : classes) {
             if (!clazz.isAbstract()) {
                 count++;
             }
@@ -181,12 +193,12 @@ public class JavaPackage {
         }
     }
 
-    public Collection getAfferents() {
+    public Collection<JavaPackage> getAfferents() {
         return afferents;
     }
 
-    public void setAfferents(Collection afferents) {
-        this.afferents = new ArrayList(afferents);
+    public void setAfferents(Collection<JavaPackage> afferents) {
+        this.afferents = new ArrayList<JavaPackage>(afferents);
     }
 
     public void addEfferent(JavaPackage jPackage) {
@@ -197,12 +209,12 @@ public class JavaPackage {
         }
     }
 
-    public Collection getEfferents() {
+    public Collection<JavaPackage> getEfferents() {
         return efferents;
     }
 
-    public void setEfferents(Collection efferents) {
-        this.efferents = new ArrayList(efferents);
+    public void setEfferents(Collection<JavaPackage> efferents) {
+        this.efferents = new ArrayList<JavaPackage>(efferents);
     }
 
     /**
