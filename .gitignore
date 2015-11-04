@@ -1,5 +1,4 @@
 /bin
 /build
 /dist
-/target/
-/bin/
+/target
